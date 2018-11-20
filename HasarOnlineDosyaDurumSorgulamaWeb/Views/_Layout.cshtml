@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@string.Format("{0} Dosya Durum Sorgulama", System.Web.Configuration.WebConfigurationManager.AppSettings["CompanyName"])</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+    <style type="text/css">
+        .font-weight-bold{
+            font-weight:bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        @RenderSection("bread", true)
+        <div class="panel panel-default">
+            @*<div class="panel-heading"><a href="/FileQuery/Index"><img src="@System.Web.Configuration.WebConfigurationManager.AppSettings["CompanyLogoUrl"]" style="height:50px;" /></a></div>*@
+            <div class="panel-body">@RenderBody()</div>
+        </div>
+    </div><!-- /.container -->
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>
