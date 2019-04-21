@@ -185,7 +185,7 @@ namespace Sorgu.Lib.Repository
                 else
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT  et.ID, et.EvrakID, et.KapanisTarihi, e.EvrakAdi, et.Tarih FROM TblEksikEvrak et INNER JOIN TblEvrak e ON e.EvrakID = et.EvrakID WHERE et.HasarIhbarID = " + IhbarID);
+                    sb.Append("SELECT  et.ID, et.EvrakID, et.KapanisTarihi, e.EvrakAdi, et.Tarih, et.Aciklama FROM TblEksikEvrak et INNER JOIN TblEvrak e ON e.EvrakID = et.EvrakID WHERE et.HasarIhbarID = " + IhbarID);
 
                     string query = sb.ToString();
                     data = cn.Query<EksikEvrakModel>(query).ToList();

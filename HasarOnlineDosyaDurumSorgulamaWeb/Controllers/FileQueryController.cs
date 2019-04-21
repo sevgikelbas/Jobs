@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HasarOnlineDosyaDurumSorgulamaWeb.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -18,10 +19,14 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
             var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber);
             return View(result);
         }
-        //[HttpGet]
-        //public ActionResult Detail()
-        //{
-        //    return View();
-        //}
+        public JsonResult GetDetail(string FileNumber, string RegNumber, string IdentNumber)
+        {
+            var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber);
+            return new JsonResult
+            {
+                Data = result,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
     }
 }
