@@ -201,20 +201,15 @@ else
 
             <div class="alert alert-info" style="background-color:#f6f6f6;border-color:#f6f6f6;color:black;"><center><h4>Ödeme Bilgileri</h4></center></div>
             <table class="table">
-                @*<tr>
-                    <td class="font-weight-bold col-md-3">İnceleme Durum</td>
-                    <td>@firstRow.PaymentDecisionMainState</td>
+                <tr>
+                    <th>Ödeme Yapılan Kişi/Kurum</th>
+                    <th>Ödeme Durumu</th>
+                    <th>Ödenen Tutar</th>
+                    <th>Ödeme Tarihi</th>
+                    <th>Ödeme Açıklama</th>
                 </tr>
                 <tr>
-                    <td class="font-weight-bold col-md-3">İnceleme Alt Durum</td>
-                    <td>@firstRow.PaymentDecisionSubState</td>
-                </tr>*@
-                <tr>
-                    <td class="font-weight-bold col-md-3">Ödeme Yapılan Kişi</td>
                     <td>@firstRow.PaymentTargetName @firstRow.PaymentTargetLastName</td>
-                </tr>
-                <tr>
-                    <td class="font-weight-bold col-md-3">Ödeme Durumu</td>
                     <td>
                         @switch (firstRow.PState)
                         {
@@ -228,25 +223,47 @@ else
                                 @:<span>@firstRow.PState</span>
                                 break;
                         }
-                </td>
-            </tr>
-            <tr>
-                <td class="font-weight-bold col-md-3">Ödenen Tutar</td>
-                <td>@((firstRow.PaymentAmount ?? 0).ToString("N2"))</td>
-            </tr>
-            <tr>
-                <td class="font-weight-bold col-md-3">Ödeme Tarihi</td>
-                <td>
-                    @if (firstRow.PaymentDate.HasValue)
+                    </td>
+                    <td>@((firstRow.PaymentAmount ?? 0).ToString("N2"))</td>
+                    <td>
+                        @if (firstRow.PaymentDate.HasValue)
+                        {
+                            @:<span>@firstRow.PaymentDate.Value.ToString("dd.MM.yyyy")</span>
+                        }
+                    </td>
+                    <td>@firstRow.PDescription</td>
+                </tr>
+                @if (firstRow.ActorPayments != null && firstRow.ActorPayments.Count > 0)
+                {
+                    foreach(var itemActor in firstRow.ActorPayments)
                     {
-                        @:<span>@firstRow.PaymentDate.Value.ToString("dd.MM.yyyy")</span>
+                        <tr>
+                            <td>@itemActor.PaymentTargetName @itemActor.PaymentTargetLastName</td>
+                            <td>
+                                @switch (itemActor.PState)
+                                {
+                                    case "T":
+                                        @:<span>Tahakkuk</span>
+                                        break;
+                                    case "I":
+                                        @:<span>Iptal</span>
+                                        break;
+                                    default:
+                                        @:<span>@itemActor.PState</span>
+                                        break;
+                                }
+                            </td>
+                            <td>@((itemActor.PaymentAmount ?? 0).ToString("N2"))</td>
+                            <td>
+                                @if (itemActor.PaymentDate.HasValue)
+                                {
+                                    @:<span>@itemActor.PaymentDate.Value.ToString("dd.MM.yyyy")</span>
+                                }
+                            </td>
+                            <td>@itemActor.PDescription</td>
+                        </tr>
                     }
-                </td>
-            </tr>
-            <tr>
-                <td class="font-weight-bold col-md-3">Ödeme Açıklama</td>
-                <td>@firstRow.PDescription</td>
-            </tr>
+                }
             </table>
         </div>
     </div>

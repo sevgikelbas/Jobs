@@ -155,6 +155,7 @@ namespace Sorgu.Lib.Repository
                 foreach(var item in data)
                 {
                     item.MissingDocumentList = QueryRepository.GetEksikEvrakList(item.HasarIhbarID);
+                    item.ActorPayments = QueryRepository.GetActorPayments(item.HasarIhbarID);
                 }
 
                 return new Result<List<ResponseModel>>
@@ -194,6 +195,44 @@ namespace Sorgu.Lib.Repository
                 if (data == null)
                 {
                     data = new List<EksikEvrakModel>();
+                }
+
+                return data;
+            }
+        }
+        public static List<PaymentActorModel> GetActorPayments(int IhbarID)
+        {
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                List<PaymentActorModel> data = null;
+                if (ConfigurationManager.AppSettings["Test"] == "1")
+                {
+                    data = new List<PaymentActorModel>();
+                    data.Add(new PaymentActorModel
+                    {
+                        ActorCode = "Test1",
+                        PaymentAmount = 10,
+                        PaymentDate = new DateTime(2001, 01, 01),
+                        PaymentNo = "1",
+                        PaymentTargetLastName = "Test Soyisim",
+                        PaymentTargetName = "Test İsim",
+                        PaymentTargetTypeName = "Tazminat",
+                        PDescription = "Test",
+                        PState = "T"
+                    });
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Select od.TeminatSiraNo, od.AktorTipi, od.AlacakliTipi, od.AlacakliAdi as PaymentTargetName, od.AlacakliSoyad as PaymentTargetLastName, od.AktorKodu as ActorCode, ob.OdemeAciklama as PDescription, ob.OdemeDurumu as PState, ob.OdemeSiraNo as PaymentNo, ob.OdemeTarihi as PaymentDate, ob.OdemeTipi as PaymentTargetTypeName, ob.OdenenTutar as PaymentAmount from TblOdemeDetaylari as od inner join TblOdemeBildirim as ob on ob.HasarIhbarID = od.HasarIhbarID and od.AlacakliTipi = ob.OdemeTipi and od.AktorKodu = ob.AktorKodu where od.HasarIhbarID = " + IhbarID);
+
+                    string query = sb.ToString();
+                    data = cn.Query<PaymentActorModel>(query).ToList();
+                }
+
+                if (data == null)
+                {
+                    data = new List<PaymentActorModel>();
                 }
 
                 return data;

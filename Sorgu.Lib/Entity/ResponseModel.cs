@@ -90,5 +90,47 @@ namespace Sorgu.Lib.Entity
         public string PaymentTargetTypeName { get; set; }
 
         public List<EksikEvrakModel> MissingDocumentList { get; set; }
+        public List<PaymentActorModel> ActorPayments { get; set; }
+    }
+    public class PaymentActorModel
+    {
+        string _targetName = string.Empty, _targetLastname = string.Empty;
+        public string PaymentTargetName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_targetName) && _targetName.Length > 1)
+                {
+                    return _targetName.Substring(0, 1) + "***";
+                }
+                else
+                {
+                    return "***";
+                }
+            }
+            set { _targetName = value; }
+        }
+        public string PaymentTargetLastName
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_targetLastname) && _targetLastname.Length > 1)
+                {
+                    return _targetLastname.Substring(0, 1) + "***";
+                }
+                else
+                {
+                    return "***";
+                }
+            }
+            set { _targetLastname = value; }
+        }
+        public string ActorCode { get; set; }
+        public string PaymentNo { get; set; }
+        public decimal? PaymentAmount { get; set; }
+        public DateTime? PaymentDate { get; set; }
+        public string PState { get; set; }
+        public string PDescription { get; set; }
+        public string PaymentTargetTypeName { get; set; }
     }
 }
