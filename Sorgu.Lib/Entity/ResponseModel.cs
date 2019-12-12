@@ -132,5 +132,6 @@ namespace Sorgu.Lib.Entity
         public string PState { get; set; }
         public string PDescription { get; set; }
         public string PaymentTargetTypeName { get; set; }
+        public string InvoiceNo { get; set; }
     }
 }

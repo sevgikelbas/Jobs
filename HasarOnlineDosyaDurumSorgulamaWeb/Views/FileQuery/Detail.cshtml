@@ -205,6 +205,7 @@ else
                     <th>Ödeme Yapılan Kişi/Kurum</th>
                     <th>Ödeme Durumu</th>
                     <th>Ödenen Tutar</th>
+                    <th>Fatura No</th>
                     <th>Ödeme Tarihi</th>
                     <th>Ödeme Açıklama</th>
                 </tr>
@@ -225,6 +226,7 @@ else
                         }
                     </td>
                     <td>@((firstRow.PaymentAmount ?? 0).ToString("N2"))</td>
+                    <td>-</td>
                     <td>
                         @if (firstRow.PaymentDate.HasValue)
                         {
@@ -238,7 +240,7 @@ else
                     foreach(var itemActor in firstRow.ActorPayments)
                     {
                         <tr>
-                            <td>@itemActor.PaymentTargetName @itemActor.PaymentTargetLastName</td>
+                            <td>@itemActor.PaymentTargetName</td>
                             <td>
                                 @switch (itemActor.PState)
                                 {
@@ -254,6 +256,7 @@ else
                                 }
                             </td>
                             <td>@((itemActor.PaymentAmount ?? 0).ToString("N2"))</td>
+                            <td>@itemActor.InvoiceNo</td>
                             <td>
                                 @if (itemActor.PaymentDate.HasValue)
                                 {
