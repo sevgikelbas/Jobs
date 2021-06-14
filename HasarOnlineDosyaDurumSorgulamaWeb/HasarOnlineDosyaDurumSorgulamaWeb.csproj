@@ -160,6 +160,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DocumentInstallModel.cs" />
+    <Compile Include="Models\FileQueryModel.cs" />
     <Compile Include="Models\JsonResponseModel.cs" />
     <Compile Include="Models\SendMailModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

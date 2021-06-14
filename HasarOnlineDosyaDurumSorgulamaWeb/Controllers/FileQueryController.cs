@@ -1,4 +1,6 @@
 ﻿using HasarOnlineDosyaDurumSorgulamaWeb.Models;
+using Sorgu.Lib.BaseType;
+using Sorgu.Lib.Entity;
 using Sorgu.Lib.Extensions;
 using System;
 using System.Collections.Generic;
@@ -16,25 +18,44 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
         {
             return View();
         }
+
         [HttpPost]
-        public ActionResult Detail(string FileNumber, string RegNumber, string IdentNumber,string SuffererNumber)
+        public ActionResult Index(FileQueryModel fileQueryModel)
         {
-            var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber, SuffererNumber);
+            Result<List<ResponseModel>> result = new Result<List<ResponseModel>>();
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Detail", fileQueryModel);
+            }
+            else
+            {
+                return View();
+            }
+
+        }
+
+        public ActionResult Detail(FileQueryModel fileQueryModel)
+        {
+            Result<List<ResponseModel>> result = new Result<List<ResponseModel>>();
+
+            result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(fileQueryModel.FileNumber, fileQueryModel.RegNumber, fileQueryModel.IdentNumber, fileQueryModel.SuffererNumber);
             if (result.Success)
             {
                 return View(result);
             }
             else
             {
-                return new JsonResult
-                {
-                    Data = result,
-                    JsonRequestBehavior = JsonRequestBehavior.AllowGet
-                };
+                //return new JsonResult
+                //{
+                //    Data = result,
+                //    JsonRequestBehavior = JsonRequestBehavior.AllowGet
+                //};
+                ModelState.AddModelError("err", "Dosya bulunamadı");
+                return RedirectToAction("Index");
             }
-            
-           
-          
+
+
+
         }
         public JsonResult GetDetail(string FileNumber, string RegNumber, string IdentNumber, string SuffererNumber)
         {
@@ -140,15 +161,15 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 Sorgu.Lib.Repository.QueryRepository.EksikEvrakUpdate(EksikEvrakID, DateTime.Now);
                 Sorgu.Lib.Repository.QueryRepository.EksikEvrakResimInsert(SigortaFirmaID, EvrakID, HasarIhbarID, HasarDosyaID, fileName, documentUrl, 1);
 
-                Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID,7);
+                Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID, 7);
 
-                var evrakList =Sorgu.Lib.Repository.QueryRepository.GetEksikEvrakList(Convert.ToInt32(HasarIhbarID)).Where(p => p.KapanisTarihi == null).ToList();
-                if (evrakList ==null ||evrakList.Count == 0)
+                var evrakList = Sorgu.Lib.Repository.QueryRepository.GetEksikEvrakList(Convert.ToInt32(HasarIhbarID)).Where(p => p.KapanisTarihi == null).ToList();
+                if (evrakList == null || evrakList.Count == 0)
                 {
                     //Eksik evrak talebi kapatılır
 
                 }
-                
+
                 //ToDo:Mail gönder
 
 
@@ -158,7 +179,7 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
             //var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber);
 
 
-            return Json(new { success = true}, JsonRequestBehavior.AllowGet);
+            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
     }

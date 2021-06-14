@@ -170,9 +170,15 @@ namespace Sorgu.Lib.Repository
                     item.ActorPayments = QueryRepository.GetActorPayments(item.HasarIhbarID);
                 }
 
+                bool success = false;
+                if (data.Count > 0)
+                {
+                    success = true;
+                }
+
                 return new Result<List<ResponseModel>>
                 {
-                    Success = true,
+                    Success = success,
                     Response = data
                 };
             }

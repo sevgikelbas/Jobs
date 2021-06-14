@@ -9,9 +9,10 @@
     <meta name="viewport" content="width=device-width" />
     <title>@string.Format("{0} Dosya Durum Sorgulama", System.Web.Configuration.WebConfigurationManager.AppSettings["CompanyName"])</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+  
     <style type="text/css">
-        .font-weight-bold{
-            font-weight:bold;
+        .font-weight-bold {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -28,6 +29,9 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
+    <script src="~/scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
     @*<script src="~/Content/scripts/jquery.form.js"></script>*@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js"></script>
     @RenderSection("scripts", false)
