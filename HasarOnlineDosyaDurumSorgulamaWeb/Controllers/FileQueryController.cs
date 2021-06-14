@@ -134,7 +134,7 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
 
 
             HttpPostedFileBase file = Request.Files["flEksikEvrak"];
-
+            bool success = false;
             if (file != null && file.ContentLength > 0)
             {
                 //var path = Path.Combine(Server.MapPath("~/"), file.FileName);
@@ -147,39 +147,66 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 long EvrakID = Convert.ToInt64(Request.Form["EvrakID"]);
                 long SigortaFirmaID = Convert.ToInt64(ConfigurationManager.AppSettings["SigortaFirmaID"]);
 
-                string path = ConfigurationManager.AppSettings["EksikEvrakPath"] + ConfigurationManager.AppSettings["SigortaFirmaID"] + "\\" + HasarDosyaID + "\\" + HasarIhbarID + "\\" + "EVRAK" + "\\";
-                Guid guid = Guid.NewGuid();
-                string extension = Path.GetExtension(file.FileName);
-                string fileName = guid + extension;
-
-                string documentPath = path + fileName;
-
-                string documentUrl = ConfigurationManager.AppSettings["EksikEvrakUrl"] + ConfigurationManager.AppSettings["SigortaFirmaID"] + "/" + HasarDosyaID + "/" + HasarIhbarID + "/" + "EVRAK" + "/" + fileName;
-
-                file.SaveAs(documentPath);
-
-                Sorgu.Lib.Repository.QueryRepository.EksikEvrakUpdate(EksikEvrakID, DateTime.Now);
-                Sorgu.Lib.Repository.QueryRepository.EksikEvrakResimInsert(SigortaFirmaID, EvrakID, HasarIhbarID, HasarDosyaID, fileName, documentUrl, 1);
-
-                Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID, 7);
-
-                var evrakList = Sorgu.Lib.Repository.QueryRepository.GetEksikEvrakList(Convert.ToInt32(HasarIhbarID)).Where(p => p.KapanisTarihi == null).ToList();
-                if (evrakList == null || evrakList.Count == 0)
+                if (CheckFileType(file.FileName))
                 {
-                    //Eksik evrak talebi kapatılır
+                    string path = ConfigurationManager.AppSettings["EksikEvrakPath"] + ConfigurationManager.AppSettings["SigortaFirmaID"] + "\\" + HasarDosyaID + "\\" + HasarIhbarID + "\\" + "EVRAK" + "\\";
+                    Guid guid = Guid.NewGuid();
+                    string extension = Path.GetExtension(file.FileName);
+                    string fileName = guid + extension;
 
+                    string documentPath = path + fileName;
+
+                    string documentUrl = ConfigurationManager.AppSettings["EksikEvrakUrl"] + ConfigurationManager.AppSettings["SigortaFirmaID"] + "/" + HasarDosyaID + "/" + HasarIhbarID + "/" + "EVRAK" + "/" + fileName;
+
+                    file.SaveAs(documentPath);
+
+                    Sorgu.Lib.Repository.QueryRepository.EksikEvrakUpdate(EksikEvrakID, DateTime.Now);
+                    Sorgu.Lib.Repository.QueryRepository.EksikEvrakResimInsert(SigortaFirmaID, EvrakID, HasarIhbarID, HasarDosyaID, fileName, documentUrl, 1);
+
+                    Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID, 7);
+
+                   
+
+                    success = true;
                 }
+                else
+                {
+                    success = false;
+                }
+            
 
                 //ToDo:Mail gönder
 
 
 
             }
+            else
+            {
+                success = false;
+            }
 
             //var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber);
 
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            return Json(new { success = success }, JsonRequestBehavior.AllowGet);
+        }
+
+        bool CheckFileType(string fileName)
+        {
+            string ext = Path.GetExtension(fileName);
+            switch (ext.ToLower())
+            {
+                case ".jpg":
+                    return true;
+                case ".jpeg":
+                    return true;
+                case ".png":
+                    return true;
+                case ".pdf":
+                    return true;
+                default:
+                    return false;
+            }
         }
 
     }

@@ -59,7 +59,14 @@
         // Form gönderdikten sonra, işlemler tamamlandıysa eğer
         // çalışacak olan bu fonksiyondur...
         function SubmitSuccesful(result, statusText) {
-            alert("İşlem Başarılı");
+            debugger;
+            if (result==true) {
+                alert("İşlem Başarılı");
+            }
+            else {
+                alert("Hata--Dosya formatını kontrol ediniz.");
+            }
+            
             // Result parametresi Controllerdan geri döndürüğümüz veridir.
             // statusText parametresi ise Ajax işlemleri başarılı ise true,
             // değilse false dönecektir.
