@@ -26,15 +26,18 @@ namespace Sorgu.Lib.Entity
         
         public string InsuredName { get; set; }
         public string InsuredRegistrationNumber { get; set; }
+        public string InsuredIdentNumber { get; set; }
         public string InsuredBrandName { get; set; }
         public string InsuredModelName { get; set; }
         public string InsuredModelYear { get; set; }
-        
+        public string InsuredIban { get; set; }
+
         public string SuffererName { get; set; }
         public string SuffererRegistrationNumber { get; set; }
         public string SuffererBrandName { get; set; }
         public string SuffererModelName { get; set; }
         public string SuffererModelYear { get; set; }
+        public string SuffererIban { get; set; }
 
         public string RepairShopName { get; set; }
         public string RepairShopPhone { get; set; }
@@ -50,6 +53,8 @@ namespace Sorgu.Lib.Entity
 
         public string PaymentDecisionMainState { get; set; }
         public string PaymentDecisionSubState { get; set; }
+        public string FileResponsible { get; set; }
+        public string FileResponsibleEmail { get; set; }
 
         string _targetName = string.Empty, _targetLastname = string.Empty;
         public string PaymentTargetName

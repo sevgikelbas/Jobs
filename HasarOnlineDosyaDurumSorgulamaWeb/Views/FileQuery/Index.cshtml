@@ -3,32 +3,52 @@
 }
 
 @section bread{
-@*<nav class="breadcrumb">
-    <span class="breadcrumb-item active">Sorgu Giriş Ekranı</span>
-</nav>*@
+    @*<nav class="breadcrumb">
+            <span class="breadcrumb-item active">Sorgu Giriş Ekranı</span>
+        </nav>*@
 }
 
 <div class="alert alert-warning" style="background-color:#f6f6f6;border-color:#f6f6f6;color:black;">
     <ul>
-        <li>Dosya durumunuzu öğrenmek için lütfen aşağıdaki bilgilerden en az ikisini giriniz.</li>
+        @*<li>Dosya durumunuzu öğrenmek için lütfen aşağıdaki bilgilerden en az üçünü giriniz.</li>*@
+        <li>Dosya durumunuzu öğrenmek için lütfen aşağıdaki bilgileri giriniz.</li>
         <li>Online'dan dosya durum sorgulamayı sadece <b>Trafik</b> ve <b>Kasko</b> hasarlarınız için yapabilirsiniz. Diğer hasar dosyalarınızın durumunu öğrenmek için <b>0850 755 1 755</b> Hasar Bildirim hattından bilgi alabilirsiniz.</li>
     </ul>
 </div>
 
-<form action="/FileQuery/Detail" method="post">
-    <div class="form-group">
-        <label>Hasar Dosya Numarası</label>
-        <input type="text" class="form-control" name="FileNumber" placeholder="Hasar dosya numaranızı giriniz">
+<form action="/FileQuery/Detail" id="frmfile" method="post">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Hasar Dosya Numarası</label>
+            <input type="text" class="form-control" name="FileNumber" placeholder="Hasar dosya numaranızı giriniz">
+        </div>
     </div>
-    <div class="form-group">
-        <label>Araç Plakası</label>
-        <input type="text" class="form-control" name="RegNumber" placeholder="Araç plakanızı giriniz">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Mağdur Numarası</label>
+            <input type="text" class="form-control" name="SuffererNumber" placeholder="Mağdur numaranızı giriniz">
+        </div>
     </div>
-    <div class="form-group">
-        <label>Kimlik Numarası / Vergi Numarası</label>
-        <input type="text" class="form-control" name="IdentNumber" placeholder="Kimlik numaranızı veya vergi numaranızı giriniz">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Araç Plakası</label>
+            <input type="text" class="form-control" name="RegNumber" placeholder="Araç plakanızı giriniz">
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <label>Kimlik Numarası / Vergi Numarası</label>
+            <input type="text" class="form-control" name="IdentNumber" placeholder="Kimlik numaranızı veya vergi numaranızı giriniz">
+        </div>
     </div>
     <center>
         <button type="submit" class="btn btn-lg" style="background-color:#eb1c74;border-color:#eb1c74;color:white;">Sorgula</button>
     </center>
 </form>
+
+@section scripts{
+    <script type="text/javascript">
+
+
+    </script>
+}

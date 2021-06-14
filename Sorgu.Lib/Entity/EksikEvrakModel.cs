@@ -14,5 +14,9 @@ namespace Sorgu.Lib.Entity
         public string Email { get; set; }
         public string Aciklama { get; set; }
         public string AdiSoyadi { get; set; }
+        public long EksikEvrakID { get; set; }
+        public long EvrakID { get; set; }
+        public long HasarIhbarID { get; set; }
+        public long? HasarDosyaID { get; set; }
     }
 }

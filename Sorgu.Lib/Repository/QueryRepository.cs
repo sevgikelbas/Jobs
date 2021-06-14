@@ -9,12 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using Sorgu.Lib.Extensions;
+using System.Data;
 
 namespace Sorgu.Lib.Repository
 {
     public class QueryRepository
     {
-        public static Result<List<ResponseModel>> QueryFiles(string FNumber, string RegNumber, string IdentNumber)
+        public static Result<List<ResponseModel>> QueryFiles(string FNumber, string RegNumber, string IdentNumber,string SuffererNumber)
         {
             FNumber = FNumber.ToNormalize();
             RegNumber = RegNumber.ToNormalize();
@@ -33,13 +34,17 @@ namespace Sorgu.Lib.Repository
             {
                 validationCount++;
             }
+            if (!string.IsNullOrEmpty(SuffererNumber))
+            {
+                validationCount++;
+            }
 
-            if ((string.IsNullOrEmpty(FNumber) && string.IsNullOrEmpty(RegNumber) && string.IsNullOrEmpty(IdentNumber)) || (validationCount<2))
+            if ((string.IsNullOrEmpty(FNumber) && string.IsNullOrEmpty(RegNumber) && string.IsNullOrEmpty(IdentNumber) && string.IsNullOrEmpty(SuffererNumber)) || (validationCount < 3))
             {
                 return new Result<List<ResponseModel>>
                 {
                     Success = false,
-                    Message = "Dosyaya durumunuzu sorgulayabilmek için en az iki bilgi girmelisiniz",
+                    Message = "Dosya durumunuzu öğrenmek için lütfen aşağıdaki bilgileri giriniz.",
                     Response = new List<ResponseModel>()
                 };
             }
@@ -93,8 +98,10 @@ namespace Sorgu.Lib.Repository
                 else
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("Select top 1 d.HasarDosyaID, d.DosyaNo as FileNumber, d.PoliceNo as PolicyNumber, convert(varchar(25), d.PoliceBaslangicTarihi, 105) as PolicyBeginDate, convert(varchar(25), d.PoliceBitisTarihi, 105) as PolicyEndDate, convert(varchar(25), d.HasarTarihi, 105) as ClaimDate, i.IhbarDurumID,");
-                    sb.Append(" d.SigortaliAdi +' '+ d.SigortaliSoyadi as InsuredName, d.SigortaliAracPlakaNo as InsuredRegistrationNumber, d.SigortaliAracModelYili as InsuredModelYear,");
+                    sb.Append("Select top 1 d.HasarDosyaID,  dbo.GetFileNumberWithPrefix(i.HasarIhbarID) as FileNumber,dosyaSorumlusu.AdiSoyAdi as FileResponsible,dosyaSorumlusu.Eposta as FileResponsibleEmail, d.PoliceNo as PolicyNumber, convert(varchar(25), d.PoliceBaslangicTarihi, 105) as PolicyBeginDate, convert(varchar(25), d.PoliceBitisTarihi, 105) as PolicyEndDate, convert(varchar(25), d.HasarTarihi, 105) as ClaimDate, i.IhbarDurumID," +
+                        "isnull(i.MagdurIban,'') as SuffererIban," +
+                        "isnull(d.SigortaliIban,'') as InsuredIban,");
+                    sb.Append(" d.SigortaliAdi +' '+ d.SigortaliSoyadi as InsuredName, d.SigortaliAracPlakaNo as InsuredRegistrationNumber,d.SigortaliKimlikNo as InsuredIdentNumber,d.SigortaliAracModelYili as InsuredModelYear,");
 
                     sb.Append(" i.HasarIhbarID, Convert(varchar(25), i.IhbarTarih, 105) as InformDate, tt.Ad as InformDocumentTypeName, i.MuallakHasar as EstimatedDamageAmount,");
                     sb.Append(" idt.DurumValue as FileStateName, i.AracSahibiAdi + ' ' + i.AracSahibiSoyadi as SuffererName, i.AracPlakaNo as SuffererRegistrationNumber, i.AracModelYili as SuffererModelYear,");
@@ -121,6 +128,7 @@ namespace Sorgu.Lib.Repository
                     sb.Append(" inner join TblHasarNedeni as hasned on hasned.HasarNedeniID=d.HasarNedeniID");
                     sb.Append(" left outer join TblSehir as hcity on hcity.SehirID=d.HasarSehirID");
                     sb.Append(" left outer join TblIlce as hdistrict on hdistrict.IlceID=d.HasarIlceID");
+                    sb.Append(" left outer join HasarOnlineCommonDB..TblKullanici as dosyaSorumlusu on dosyaSorumlusu.KullaniciID=i.DosyaSorumlusuID");
                     sb.AppendFormat(" left outer join {0}.TblAracMarka as ms on ms.MarkaID=d.SigortaliAracMarkaID", ConfigurationManager.AppSettings["CommonDBTablePath"]);
                     sb.AppendFormat(" left outer join {0}.TblAracMarkaTipi as mos on mos.AracMarkaTipiID=d.SigortaliAracMarkaTipiID", ConfigurationManager.AppSettings["CommonDBTablePath"]);
                     sb.AppendFormat(" left outer join {0}.TblAracMarka as mm on mm.MarkaID=i.AracMarkaID", ConfigurationManager.AppSettings["CommonDBTablePath"]);
@@ -145,6 +153,10 @@ namespace Sorgu.Lib.Repository
                     {
                         sb.AppendFormat(" and (Replace(d.SigortaliKimlikNo, ' ', '')='{0}' or Replace(i.AracSahibiKimlikNo, ' ', '')='{0}')", IdentNumber);
                     }
+                    if (!string.IsNullOrEmpty(SuffererNumber))
+                    {
+                        sb.AppendFormat(" and Replace(i.IhbarSiraNo, ' ', '')='{0}'", SuffererNumber);
+                    }
                     sb.Append(" order by i.HasarIhbarID");
 
                     string query = sb.ToString();
@@ -152,7 +164,7 @@ namespace Sorgu.Lib.Repository
                 }
 
                 //Eksik döküman listesi için burada for açacağız.
-                foreach(var item in data)
+                foreach (var item in data)
                 {
                     item.MissingDocumentList = QueryRepository.GetEksikEvrakList(item.HasarIhbarID);
                     item.ActorPayments = QueryRepository.GetActorPayments(item.HasarIhbarID);
@@ -186,7 +198,7 @@ namespace Sorgu.Lib.Repository
                 else
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("SELECT  et.ID, et.EvrakID, et.KapanisTarihi, e.EvrakAdi, et.Tarih, et.Aciklama FROM TblEksikEvrak et INNER JOIN TblEvrak e ON e.EvrakID = et.EvrakID WHERE et.HasarIhbarID = " + IhbarID);
+                    sb.Append("SELECT  et.ID as EksikEvrakID, et.EvrakID, et.KapanisTarihi, e.EvrakAdi, et.Tarih, et.Aciklama FROM TblEksikEvrak et INNER JOIN TblEvrak e ON e.EvrakID = et.EvrakID WHERE et.HasarIhbarID = " + IhbarID);
 
                     string query = sb.ToString();
                     data = cn.Query<EksikEvrakModel>(query).ToList();
@@ -200,6 +212,108 @@ namespace Sorgu.Lib.Repository
                 return data;
             }
         }
+
+        public static EksikEvrakModel GetEksikEvrak(long EksikEvrakID)
+        {
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                EksikEvrakModel data = null;
+
+                StringBuilder sb = new StringBuilder();
+                sb.Append("select ek.ID as EksikEvrakID, ek.HasarIhbarID, hi.HasarDosyaID, ek.EvrakID, ek.Tarih, ek.KapanisTarihi, e.EvrakAdi from TblEksikEvrak ek" +
+                    " inner join TblHasarIhbar hi on hi.HasarIhbarID = ek.HasarIhbarID " +
+                    " inner join TblEvrak e on e.EvrakID = ek.EvrakID where ek.ID =" + EksikEvrakID);
+
+                string query = sb.ToString();
+                data = cn.Query<EksikEvrakModel>(query).FirstOrDefault();
+
+                if (data == null)
+                {
+                    data = new EksikEvrakModel();
+                }
+
+                return data;
+            }
+        }
+
+        public static bool EksikEvrakUpdate(long Id, DateTime? kapanisTarihi)
+        {
+
+            string sqlUpdate = "UPDATE TblEksikEvrak SET KapanisTarihi = @KapanisTarihi WHERE ID = @ID;";
+
+            using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                try
+                {
+                    var affectedRows = connection.Execute(sqlUpdate, new { ID = Id, KapanisTarihi = kapanisTarihi });
+
+                    if (affectedRows > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    return false;
+                }
+
+            }
+        }
+
+        public static bool EksikEvrakResimInsert(long sigortaFirmaID, long evrakId, long hasarIhbarID, long hasarDosyaId, string dosyaAdi, string dosyaYolu, long kayitEden)
+        {
+            string sql = "sp_HasarEvrak_Insert";
+
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                try
+                {
+                    var affectedRows = cn.Execute(sql,
+                   new
+                   {
+                       EvrakId = evrakId,
+                       SigortaFirmaID = sigortaFirmaID,
+                       HasarIhbarId = hasarIhbarID,
+                       EvrakDurum = true,
+                       EvrakTipi = 2,
+                       Notu = "",
+                       HasarDosyaID = hasarDosyaId,
+                       ResimTipiID = (int?)null,
+                       ResimTipi = "EVRAK",
+                       OrjinalAdi = dosyaAdi,
+                       DosyaYolu = dosyaYolu,
+                       ThumbnailYolu = (string)null,
+                       DosyaYolu4_3 = (string)null,
+                       Tarih = DateTime.Now,
+                       KayitEden = kayitEden
+                   },
+                   commandType: CommandType.StoredProcedure);
+
+                    if (affectedRows > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                    return false;
+                }
+
+
+
+            }
+        }
+
         public static List<PaymentActorModel> GetActorPayments(int IhbarID)
         {
             using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
@@ -236,6 +350,46 @@ namespace Sorgu.Lib.Repository
                 }
 
                 return data;
+            }
+        }
+
+        public static FileResponsibleModel GetFileResponsible(int IhbarID)
+        {
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                FileResponsibleModel fileResponsibleModel = new FileResponsibleModel();
+                StringBuilder sb = new StringBuilder();
+                sb.Append(@"select k.KullaniciID as UserId,k.KullaniciKodu as UserName,k.AdiSoyadi as NameSurname,k.Eposta as Email  from TblHasarIhbar hi
+inner join HasarOnlineCommonDB..TblKullanici k on k.KullaniciID = hi.DosyaSorumlusuID
+where hi.HasarIhbarID =" + IhbarID);
+
+                string query = sb.ToString();
+                fileResponsibleModel = cn.Query<FileResponsibleModel>(query).FirstOrDefault();
+                if (fileResponsibleModel == null)
+                {
+                    fileResponsibleModel = new FileResponsibleModel();
+                }
+
+                return fileResponsibleModel;
+            }
+        }
+
+        public static bool FileStatusUpdate(long HasarIhbarID, byte IhbarDurumID)
+        {
+            string sqlUpdate = "UPDATE TblHasarIhbar SET IhbarDurumID=@IhbarDurumID WHERE HasarIhbarID = @HasarIhbarID;";
+
+            using (var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                var affectedRows = connection.Execute(sqlUpdate, new { HasarIhbarID = HasarIhbarID, IhbarDurumID = IhbarDurumID });
+
+                if (affectedRows > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
     }

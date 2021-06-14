@@ -1,0 +1,67 @@
+﻿@model Sorgu.Lib.Entity.EksikEvrakModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>DocumentInstall</title>
+    <script src="~/Content/scripts/jquery-1.12.0.min.js"></script>
+    <script src="~/Content/scripts/jquery.form.js"></script>
+
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm("DocumentInstall", "FileQuery", FormMethod.Post, new { @id = "dosya_gonder_form" }))
+        {
+            <input type="hidden" name="HasarDosyaID" id="HasarDosyaID" value="@Model.HasarDosyaID" />
+            <input type="hidden" name="HasarIhbarID" id="HasarIhbarID" value="@Model.HasarIhbarID" />
+            <input type="hidden" name="EvrakID" id="EvrakID" value="@Model.EvrakID" />
+            <input type="hidden" name="EksikEvrakID" id="EksikEvrakID" value="@Model.EksikEvrakID" />
+            <div>
+                <span style="font-weight:bold;">Evrak Adı : @Model.EvrakAdi</span>
+                <br />
+                <br />
+                <div style="float:left;">
+                    <input type="file" name="flEksikEvrak" id="flEksikEvrak" />
+                </div>
+                <div style="float:left;">
+                    <input type="submit" value="Dosyayı Yükle" />
+                </div>
+            </div>
+            
+            
+            
+        }
+    </div>
+</body>
+</html>
+<script>
+        $(function () {
+            $('#dosya_gonder_form').ajaxForm({
+                beforeSubmit: ShowRequest,
+                success: SubmitSuccesful,
+                error: AjaxError
+            });
+        });
+        // Form gönderilmeden önce tetiklenecek fonksiyon...
+        function ShowRequest(formData, jqForm, options) {
+
+        }
+        // Eğer bir hata oluşursa bu fonksiyon tetiklenecektir...
+        function AjaxError() {
+
+        }
+        // Form gönderdikten sonra, işlemler tamamlandıysa eğer
+        // çalışacak olan bu fonksiyondur...
+        function SubmitSuccesful(result, statusText) {
+            alert("İşlem Başarılı");
+            // Result parametresi Controllerdan geri döndürüğümüz veridir.
+            // statusText parametresi ise Ajax işlemleri başarılı ise true,
+            // değilse false dönecektir.
+        }
+</script>
