@@ -18,6 +18,7 @@
     <div>
         @using (Html.BeginForm("DocumentInstall", "FileQuery", FormMethod.Post, new { @id = "dosya_gonder_form" }))
         {
+            @Html.AntiForgeryToken();
             <input type="hidden" name="HasarDosyaID" id="HasarDosyaID" value="@Model.HasarDosyaID" />
             <input type="hidden" name="HasarIhbarID" id="HasarIhbarID" value="@Model.HasarIhbarID" />
             <input type="hidden" name="EvrakID" id="EvrakID" value="@Model.EvrakID" />
