@@ -338,7 +338,7 @@ namespace Sorgu.Lib.Repository
                 else
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("Select od.TeminatSiraNo, od.AktorTipi, od.AlacakliTipi, od.AlacakliAdi as PaymentTargetName, od.AlacakliSoyad as PaymentTargetLastName, od.AktorKodu as ActorCode, ob.OdemeAciklama as PDescription, ob.OdemeDurumu as PState, ob.OdemeSiraNo as PaymentNo, ob.OdemeTarihi as PaymentDate, ob.OdemeTipi as PaymentTargetTypeName, ob.OdenenTutar as PaymentAmount from TblOdemeDetaylari as od inner join TblOdemeBildirim as ob on ob.HasarIhbarID = od.HasarIhbarID and od.AlacakliTipi = ob.OdemeTipi and od.AktorKodu = ob.AktorKodu where od.HasarIhbarID = " + IhbarID);
+                    sb.Append("Select od.TeminatSiraNo, od.AktorTipi, od.AlacakliTipi, od.AlacakliAdi as PaymentTargetName, od.FaturaNo as InvoiceNo, od.AlacakliSoyad as PaymentTargetLastName, od.AktorKodu as ActorCode, ob.OdemeAciklama as PDescription, ob.OdemeDurumu as PState, ob.OdemeSiraNo as PaymentNo, ob.OdemeTarihi as PaymentDate, ob.OdemeTipi as PaymentTargetTypeName, od.NetTutar as PaymentAmount from TblOdemeDetaylari as od inner join TblOdemeBildirim as ob on ob.HasarIhbarID = od.HasarIhbarID and od.AlacakliTipi = ob.OdemeTipi and od.AktorKodu = ob.AktorKodu where od.HasarIhbarID = " + IhbarID);
 
                     string query = sb.ToString();
                     data = cn.Query<PaymentActorModel>(query).ToList();
