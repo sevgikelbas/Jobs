@@ -20,19 +20,26 @@
 <form action="/FileQuery/Index" id="frmfile" method="post">
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div class="form-group">
             <label>Hasar Dosya Numarası</label>
             <input type="text" class="form-control" name="FileNumber" placeholder="Hasar dosya numaranızı giriniz">
             @Html.ValidationMessageFor(x => x.FileNumber, "", new { @style = "color:red" })
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-1">
         <div class="form-group">
-            <label>Mağdur Numarası</label>
-            <input type="text" class="form-control" name="SuffererNumber" placeholder="Mağdur numaranızı giriniz">
-            @Html.ValidationMessageFor(x => x.SuffererNumber, "", new { @style = "color:red" })
+            <span id="GetVictims" style="font-size: 3em; color: tomato; cursor: pointer;" title="Mağdur Listele">
+                <i class="fas fa-angle-double-right"></i>
+            </span>
         </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group" style="">
+            <label>Mağdur Numarası</label>
+            @Html.DropDownListFor(model => model.SuffererNumber, Enumerable.Empty<SelectListItem>(), "Lütfen Mağdur Seçiniz", new { @class = "form-control", @disabled = "disabled"})
+            @Html.ValidationMessageFor(x => x.SuffererNumber, "", new { @style = "color:red" })
+        </div>        
     </div>
     <div class="col-md-12">
         <div class="form-group">
@@ -54,8 +61,30 @@
 </form>
 
 @section scripts{
+    <script src="https://kit.fontawesome.com/baad5ef81d.js" crossorigin="anonymous"></script>
     <script type="text/javascript">
 
+        $(document).ready(function () {
+        debugger;
+            // Dosya numarası girildikten sonra dosyanın mağdurlarını doldurur.
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetVictimListByFileNumber", "FileQuery")',
+                data: { FileNumber:  },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success:
+                    function (data) {
+                        let output = data.map(x => "<option value='" + x.ID + "'>" + x.FullName + "</option>");
+                        $("#SuffererNumber").html('<option value="-1">Lütfen Mağdur Seçiniz</option>');
+                        $("#SuffererNumber").append(output.join(' '));
+                    },
+                error:
+                    function (data) {
+                        alert("Error: " + data);
+                    }
+        });
 
+    });
     </script>
 }

@@ -16,7 +16,6 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
     {
         public ActionResult Index()
         {
-
             return View();
         }
 
@@ -57,6 +56,18 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
         public JsonResult GetDetail(string FileNumber, string RegNumber, string IdentNumber, string SuffererNumber)
         {
             var result = Sorgu.Lib.Repository.QueryRepository.QueryFiles(FileNumber, RegNumber, IdentNumber, SuffererNumber);
+            return new JsonResult
+            {
+                Data = result,
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
+
+        // Dosya Numarasına göre mağdur listeleme.
+        [HttpGet]
+        public JsonResult GetVictimListByFileNumber(string FileNumber)
+        {
+            var result = Sorgu.Lib.Repository.QueryRepository.GetFileVictims(FileNumber);
             return new JsonResult
             {
                 Data = result,

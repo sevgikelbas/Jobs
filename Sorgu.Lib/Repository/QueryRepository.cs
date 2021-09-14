@@ -375,8 +375,22 @@ where hi.HasarIhbarID =" + IhbarID);
                 {
                     fileResponsibleModel = new FileResponsibleModel();
                 }
-
                 return fileResponsibleModel;
+            }
+        }
+
+        public static List<MagdurModel> GetFileVictims(string FileNumber)
+        {
+            using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(@"select hasIhb.IhbarSiraNo As ID, MagdurAdi As FullName from HasarOnlineCommonDB..TblEksperDosya As eksDos
+	INNER JOIN TblHasarIhbar AS hasIhb ON eksDos.IhbarID = hasIhb.HasarIhbarID
+	INNER JOIN TblHasarDosya AS hasDos ON hasDos.HasarDosyaID = hasIhb.HasarDosyaID
+		WHERE eksDos.IhbarID = hasIhb.HasarIhbarID AND hasDos.DosyaNo = " + FileNumber);
+                string query = sb.ToString();
+                var model = cn.Query<MagdurModel>(query).ToList();
+                return model;
             }
         }
 
