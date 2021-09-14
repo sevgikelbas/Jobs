@@ -16,6 +16,7 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
     {
         public ActionResult Index()
         {
+
             return View();
         }
 
@@ -31,7 +32,6 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
             {
                 return View();
             }
-
         }
 
         public ActionResult Detail(FileQueryModel fileQueryModel)
@@ -53,9 +53,6 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 ModelState.AddModelError("err", "Dosya bulunamadı");
                 return RedirectToAction("Index");
             }
-
-
-
         }
         public JsonResult GetDetail(string FileNumber, string RegNumber, string IdentNumber, string SuffererNumber)
         {
@@ -131,16 +128,10 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
         [HttpPost]
         public JsonResult DocumentInstall(FormCollection collection)
         {
-
-
             HttpPostedFileBase file = Request.Files["flEksikEvrak"];
             bool success = false;
             if (file != null && file.ContentLength > 0)
             {
-                //var path = Path.Combine(Server.MapPath("~/"), file.FileName);
-
-
-
                 long HasarDosyaID = Convert.ToInt64(Request.Form["HasarDosyaID"]);
                 long HasarIhbarID = Convert.ToInt64(Request.Form["HasarIhbarID"]);
                 long EksikEvrakID = Convert.ToInt64(Request.Form["EksikEvrakID"]);
@@ -163,21 +154,16 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                     Sorgu.Lib.Repository.QueryRepository.EksikEvrakUpdate(EksikEvrakID, DateTime.Now);
                     Sorgu.Lib.Repository.QueryRepository.EksikEvrakResimInsert(SigortaFirmaID, EvrakID, HasarIhbarID, HasarDosyaID, fileName, documentUrl, 1);
 
-                    Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID, 7);
-
-                   
+                    Sorgu.Lib.Repository.QueryRepository.FileStatusUpdate(HasarIhbarID, 7);                 
 
                     success = true;
                 }
                 else
                 {
                     success = false;
-                }
-            
+                }           
 
                 //ToDo:Mail gönder
-
-
 
             }
             else
@@ -208,6 +194,5 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                     return false;
             }
         }
-
     }
 }

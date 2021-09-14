@@ -49,6 +49,7 @@
     <Compile Include="BaseType\Result.cs" />
     <Compile Include="Entity\EksikEvrakModel.cs" />
     <Compile Include="Entity\FileResponsibleModel.cs" />
+    <Compile Include="Entity\MagdurModel.cs" />
     <Compile Include="Entity\RequestModel.cs" />
     <Compile Include="Entity\ResponseModel.cs" />
     <Compile Include="Extensions\CommonExtensions.cs" />
