@@ -62,9 +62,7 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
-
         // Dosya Numarasına göre mağdur listeleme.
-        [HttpGet]
         public JsonResult GetVictimListByFileNumber(string FileNumber)
         {
             var result = Sorgu.Lib.Repository.QueryRepository.GetFileVictims(FileNumber);
@@ -74,7 +72,6 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
-
         [HttpPost]
         public JsonResult SendMail(SendMailModel sendMailModel)
         {
@@ -129,13 +126,11 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
-
         public ActionResult DocumentInstall(long EksikEvrakID)
         {
             var eksikEvrak = Sorgu.Lib.Repository.QueryRepository.GetEksikEvrak(EksikEvrakID);
             return View(eksikEvrak);
         }
-
         [HttpPost]
         public JsonResult DocumentInstall(FormCollection collection)
         {
@@ -187,7 +182,6 @@ namespace HasarOnlineDosyaDurumSorgulamaWeb.Controllers
 
             return Json(new { success = success }, JsonRequestBehavior.AllowGet);
         }
-
         bool CheckFileType(string fileName)
         {
             string ext = Path.GetExtension(fileName);
