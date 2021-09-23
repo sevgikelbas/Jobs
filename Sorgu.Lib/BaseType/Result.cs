@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Sorgu.Lib.BaseType
 {
+    //test amaçlı
     public class Result<T>
     {
         public bool Success { get; set; }
