@@ -384,7 +384,7 @@ where hi.HasarIhbarID =" + IhbarID);
             using (SqlConnection cn = new SqlConnection(ConfigurationManager.ConnectionStrings["SorguCS"].ConnectionString))
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(@"select hasIhb.IhbarSiraNo As ID, '(' + CONVERT(varchar(10), hasIhb.IhbarSiraNo) + ') ' + MagdurAdi As FullName from HasarOnlineCommonDB..TblEksperDosya As eksDos
+                sb.Append(@"select hasIhb.IhbarSiraNo As ID, '(' + CONVERT(varchar(10), hasIhb.IhbarSiraNo) + ') ' + DBO.fn_MaskVarchar(MagdurAdi) As FullName from HasarOnlineCommonDB..TblEksperDosya As eksDos
 	INNER JOIN TblHasarIhbar AS hasIhb ON eksDos.IhbarID = hasIhb.HasarIhbarID
 	INNER JOIN TblHasarDosya AS hasDos ON hasDos.HasarDosyaID = hasIhb.HasarDosyaID
 		WHERE eksDos.IhbarID = hasIhb.HasarIhbarID AND hasDos.DosyaNo = " + FileNumber);
